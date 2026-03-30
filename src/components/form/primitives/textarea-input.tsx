@@ -5,10 +5,7 @@ import { FieldInfo } from "@/components/form/primitives/field-info";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useFilteredInput } from "@/hooks/use-filtered-input";
-import {
-  type AllowedCharacters,
-  getCleanTextUnicode,
-} from "@/lib/allowed-chars";
+import { type CharSpec, getCleanTextUnicode } from "@/lib/allowed-chars";
 import { formInputMetaSchema } from "@/lib/zod";
 
 const MAX_ROWS = 15;
@@ -26,12 +23,10 @@ export function TextAreaInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [dynamicRows, setDynamicRows] = useState(rows);
 
-  let allowedCharacters: AllowedCharacters | undefined;
+  let chars: CharSpec | undefined;
 
   if (typeof schema !== "undefined") {
-    allowedCharacters = formInputMetaSchema.parse(
-      schema.meta()
-    ).allowedCharacters;
+    chars = formInputMetaSchema.parse(schema.meta()).chars;
   }
 
   useEffect(() => {
@@ -43,7 +38,7 @@ export function TextAreaInput({
 
   const handleChange = useFilteredInput({
     ref: textareaRef,
-    filter: (value) => getCleanTextUnicode({ value, allowedCharacters }),
+    filter: (value) => getCleanTextUnicode({ value, chars }),
     onChange: field.handleChange,
   });
 

@@ -12,7 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod/v4";
-import { emailField, textField, usernameField } from "@/lib/allowed-chars";
+import { textField, usernameField } from "@/lib/allowed-chars";
 import { myNanoid, NANO_ID_LENGTH } from "@/lib/constants";
 
 // ─── USER TABLE ──────────────────────────────────────────────────────────────
@@ -55,10 +55,7 @@ export const selectUserSchema = createSelectSchema(user);
 
 export const insertUserSchema = createInsertSchema(user, {
   username: usernameField({
-    allowedCharacters: {
-      letters: true,
-      numbers: true,
-    },
+    chars: { preset: "username" },
     label: "Username",
     placeholder: "my_username",
   })
@@ -68,12 +65,8 @@ export const insertUserSchema = createInsertSchema(user, {
       /^[a-z0-9]+(_[a-z0-9]+)*$/,
       "Only lowercase letters, numbers, and underscores — no leading or trailing underscores"
     ),
-  email: emailField({
-    allowedCharacters: {
-      letters: true,
-      numbers: true,
-      punctuation: true,
-    },
+  email: textField({
+    chars: { preset: "email" },
     label: "Email",
     placeholder: "email@example.com",
   }).max(254, "Cannot exceed 254 characters"),
@@ -162,28 +155,14 @@ export const selectPostSchema = createSelectSchema(post);
 
 export const insertPostSchema = createInsertSchema(post, {
   title: textField({
-    allowedCharacters: {
-      letters: true,
-      spaces: true,
-      numbers: true,
-      punctuation: true,
-      spanish: { letters: true },
-    },
+    chars: { preset: "proseEs" },
     label: "Title",
     placeholder: "My post",
   })
     .min(3, "Must be at least 3 characters")
     .max(100, "Cannot exceed 100 characters"),
   content: textField({
-    allowedCharacters: {
-      letters: true,
-      spaces: true,
-      numbers: true,
-      punctuation: true,
-      newLines: true,
-      currencySymbols: true,
-      spanish: { letters: true, punctuation: true },
-    },
+    chars: { preset: "multiline" },
     label: "Content",
   }).min(1, "Content cannot be empty"),
   status: z
@@ -235,13 +214,7 @@ export const selectWidgetSchema = createSelectSchema(widget);
 
 export const insertWidgetSchema = createInsertSchema(widget, {
   name: textField({
-    allowedCharacters: {
-      letters: true,
-      spaces: true,
-      numbers: true,
-      punctuation: true,
-      spanish: { letters: true },
-    },
+    chars: { preset: "proseEs" },
     label: "Name",
     placeholder: "My widget",
   })

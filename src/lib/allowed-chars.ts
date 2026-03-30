@@ -1,92 +1,108 @@
 import { z } from "zod/v4";
-import { formInputMetaSchema } from "@/lib/zod";
+import type {
+  charFlagSchema,
+  charPresetSchema,
+  charSpecSchema,
+  formInputMetaSchema,
+} from "@/lib/zod";
 
 type FormInputMeta = z.infer<typeof formInputMetaSchema>;
 
-export type TextFieldMeta<T extends AllowedCharacters = AllowedCharacters> =
-  Omit<FormInputMeta, "allowedCharacters"> & { allowedCharacters: T };
+// ─── Types derived from zod schemas ──────────────────────────────
+// Single source of truth lives in zod.ts; types are derived here.
 
-const schema = formInputMetaSchema.shape.allowedCharacters.unwrap();
+export type CharFlag = z.infer<typeof charFlagSchema>;
+export type CharPreset = z.infer<typeof charPresetSchema>;
+export type CharSpec = z.infer<typeof charSpecSchema>;
+
+// ─── Named presets ────────────────────────────────────────────────────────────
+// Semantic names that capture the intent of a field. Add a new entry here when
+// a combination recurs across multiple tables.
+
+const PRESET_FLAGS: Record<CharPreset, CharFlag[]> = {
+  name: ["letters"],
+  prose: ["letters", "numbers", "spaces", "punctuation"],
+  proseEs: ["letters", "numbers", "spaces", "punctuation", "spanishLetters"],
+  multiline: [
+    "letters",
+    "numbers",
+    "spaces",
+    "punctuation",
+    "newLines",
+    "spanishLetters",
+    "spanishPunctuation",
+  ],
+  username: ["letters", "numbers"],
+  email: ["letters", "numbers", "punctuation"],
+};
+
+function resolveFlags(chars: CharSpec): CharFlag[] {
+  return "preset" in chars ? PRESET_FLAGS[chars.preset] : chars.custom;
+}
+
+// ─── TextFieldMeta ────────────────────────────────────────────────────────────
+
+export type TextFieldMeta = FormInputMeta & { chars: CharSpec };
+
+// ─── Regex builder ────────────────────────────────────────────────
+
+function cleanTextRegex(flags: CharFlag[]) {
+  const has = (f: CharFlag) => flags.includes(f);
+  const l = has("letters") ? "A-Za-z" : "";
+  const n = has("numbers") ? "0-9" : "";
+  const s = has("spaces") ? "\\s" : "";
+  const p = has("punctuation")
+    ? `\`~!@#$%^&*()_+\\-={}|[\\]:"\u201c"\u2019\u2018\u2018\u2019<>?,./\\\\`
+    : "";
+  const sl = has("spanishLetters")
+    ? "\u00e1\u00e9\u00ed\u00f3\u00fa\u00fc\u00f1\u00c1\u00c9\u00cd\u00d3\u00da\u00dc\u00d1"
+    : "";
+  const sp = has("spanishPunctuation") ? "\u00a1\u00bf" : "";
+
+  return new RegExp(`[^${l}${n}${s}${p}${sl}${sp}]`, "gu");
+}
+
+// ─── getCleanTextUnicode ──────────────────────────────────────────
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
+// https://unicode.org/reports/tr18/#General_Category_Property
+// Remove any strange characters like emojis, special characters, etc.
 
 const spacesRegex = /\s+/;
 
-export type AllowedCharacters = z.output<typeof schema>;
-
-function cleanTextRegex({
-  letters,
-  numbers,
-  spaces,
-  punctuation,
-  spanish,
-}: AllowedCharacters) {
-  const l = letters === true ? "A-Za-z" : "";
-  const n = numbers === true ? "0-9" : "";
-  const s = spaces === true ? "\\s" : "";
-  const p =
-    punctuation === true ? `\`~!@#$%^&*()_+\\-={}|[\\]:"“”;'‘’<>?,./\\\\` : "";
-  const sl = spanish?.letters === true ? "áéíóúüñÁÉÍÓÚÜÑ" : "";
-  const sp = spanish?.punctuation === true ? "¡¿" : "";
-
-  const regex = new RegExp(`[^${l}${n}${s}${p}${sl}${sp}]`, "gu");
-
-  return regex;
-}
-
-// function cleanTextRegex2({
-// 	letters,
-// 	numbers,
-// 	spaces,
-// 	punctuation,
-// 	currencySymbols,
-// }: AllowedCharacters) {
-// 	const l = letters === true ? "\\p{L}" : "";
-// 	const n = numbers === true ? "\\p{N}" : "";
-// 	const z = spaces === true ? "\\p{Z}" : "";
-// 	const p = punctuation === true ? "\\p{P}" : "";
-// 	const sc = currencySymbols === true ? "\\p{Sc}" : "";
-
-// 	const regex = new RegExp(`[^${l}${n}${z}${p}${sc}]`, "gu");
-
-// 	return regex;
-// }
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Regular_expressions/Unicode_character_class_escape
-// https://unicode.org/reports/tr18/#General_Category_Property
-// https://regexr.com/45vjd
-// Remove any strange characters like emojis, special characters, etc.
 export function getCleanTextUnicode({
   value,
-  allowedCharacters = {},
+  chars = { custom: [] },
   allowMultipleSpaces = false,
 }: {
   value: string;
-  allowedCharacters?: AllowedCharacters;
+  chars?: CharSpec;
   allowMultipleSpaces?: boolean;
 }) {
-  if (allowedCharacters.newLines === true) {
-    // Split by newlines to process each line separately
+  const flags = resolveFlags(chars);
+  const regex = cleanTextRegex(flags);
+
+  if (flags.includes("newLines")) {
     const lines = value.split("\n");
-
-    // Clean each line individually
     const cleanedLines = lines.map((line) => {
-      const cleanedLine = line.replace(cleanTextRegex(allowedCharacters), "");
-      if (allowMultipleSpaces === false) {
-        return cleanedLine.split(spacesRegex).join(" ");
-      }
-      return cleanedLine;
+      const cleanedLine = line.replace(regex, "");
+      return allowMultipleSpaces
+        ? cleanedLine
+        : cleanedLine.split(spacesRegex).join(" ");
     });
-
-    // Rejoin with newlines to preserve original line structure
     return cleanedLines.join("\n");
   }
 
-  const payload = value.replace(cleanTextRegex(allowedCharacters), "");
+  const payload = value.replace(regex, "");
+  return allowMultipleSpaces ? payload : payload.split(spacesRegex).join(" ");
+}
 
-  if (allowMultipleSpaces === false) {
-    return payload.split(spacesRegex).join(" ");
-  }
+// ─── Field builders ───────────────────────────────────────────────
 
-  return payload;
+export function textField(meta: TextFieldMeta) {
+  return z
+    .string()
+    .overwrite((value) => getCleanTextUnicode({ value, chars: meta.chars }))
+    .meta(meta);
 }
 
 const usernameAllowedCharacters = /[^a-z0-9_]/g;
@@ -97,43 +113,17 @@ const usernameAllowedCharacters = /[^a-z0-9_]/g;
 // https://regexr.com/8g8lf
 export const usernameRegex = /^[a-z0-9]+(_[a-z0-9]+)*$/g;
 
-export function textField<T extends AllowedCharacters>(meta: TextFieldMeta<T>) {
-  return z
-    .string()
-    .overwrite((value) =>
-      getCleanTextUnicode({
-        value,
-        allowedCharacters: meta.allowedCharacters,
-      })
-    )
-    .meta(meta);
-}
-
-export function usernameField<T extends AllowedCharacters>(
-  meta: TextFieldMeta<T>
-) {
+export function usernameField(meta: TextFieldMeta) {
   return z
     .string()
     .overwrite((value) => parseUsernameInput(value))
     .meta(meta);
 }
 
-export function emailField<T extends AllowedCharacters>(
-  meta: TextFieldMeta<T>
-) {
-  return z.email().meta(meta);
-}
-
 export function parseUsernameInput(value: string) {
-  const payload = value
-    // convert to lowercase
+  return value
     .toLowerCase()
-    // replace spaces with underscores
     .replace(/\s+/g, "_")
-    // remove any character that is not a lowercase letter, digit, or underscore
     .replace(usernameAllowedCharacters, "")
-    // replace consecutive underscores with a single underscore
     .replace(/_+/g, "_");
-
-  return payload;
 }
