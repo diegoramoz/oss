@@ -221,3 +221,52 @@ export const insertWidgetSchema = createInsertSchema(widget, {
   category: enumField(widgetCategoryEnum.enumValues, { label: "Category" }),
   amount: integerField({ label: "Amount", chars: { custom: ["numbers"] } }),
 }).strict();
+
+// ─── BUG TABLE ────────────────────────────────────────────────────────────────
+
+export const bug = pgTable(
+  "bug",
+  {
+    id: bigint("id", { mode: "bigint" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+
+    nanoId: varchar("nano_id", { length: NANO_ID_LENGTH })
+      .$defaultFn(() => myNanoid())
+      .notNull()
+      .unique(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+
+    title: varchar("title", { length: 200 }).notNull(),
+    description: varchar("description", { length: 1000 }).notNull(),
+  },
+  (t) => [uniqueIndex("bug_nano_id_idx").on(t.nanoId)]
+);
+
+export const selectBugSchema = createSelectSchema(bug);
+
+export const insertBugSchema = createInsertSchema(bug, {
+  title: textField({
+    chars: { preset: "prose" },
+    label: "Bug Title",
+    placeholder: "Login button not working on mobile",
+  })
+    .min(3, "Must be at least 3 characters")
+    .max(200, "Cannot exceed 200 characters"),
+  description: textField({
+    chars: { preset: "multiline" },
+    label: "Description",
+    placeholder: "I'm having an issue with the login button on mobile.",
+  })
+    .min(1, "Description cannot be empty")
+    .max(1000, "Cannot exceed 1000 characters"),
+}).strict();
+
+export default { user, post, widget, bug };

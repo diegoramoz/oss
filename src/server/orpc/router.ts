@@ -3,6 +3,8 @@ import { eq } from "drizzle-orm";
 import { z } from "zod/v4";
 import { db } from "@/server/db";
 import {
+  bug as bugTable,
+  insertBugSchema,
   insertUserSchema,
   insertWidgetSchema,
   user as userTable,
@@ -63,9 +65,22 @@ const userRouter = {
   }),
 };
 
+const bugRouter = {
+  create: os
+    .input(insertBugSchema.pick({ title: true, description: true }))
+    .handler(async ({ input }) => {
+      const [bug] = await db.insert(bugTable).values(input).returning();
+      if (!bug) {
+        throw new Error("Failed to create bug report");
+      }
+      return { bug };
+    }),
+};
+
 export const appRouter = {
   widget: widgetRouter,
   user: userRouter,
+  bug: bugRouter,
 };
 
 export type AppRouter = typeof appRouter;
