@@ -6,7 +6,7 @@ import { Form } from "@/components/form";
 import { TextInput } from "@/components/form/primitives/text-input";
 import { Button } from "@/components/ui/button";
 import { useOnSubmit } from "./on-submit";
-import { type CreateUserFormSchema, createUserFormSchema } from "./schema";
+import { createUserFormSchema } from "./schema";
 
 export const { fieldContext, formContext, useFieldContext } =
   createFormHookContexts();
@@ -20,16 +20,14 @@ const { useAppForm } = createFormHook({
   formComponents: {},
 });
 
-const defaultValues: CreateUserFormSchema = {
-  email: "",
-  username: "",
-};
-
 export function CreateUserForm({ redirect }: { redirect: string }) {
   const onSubmit = useOnSubmit({ redirect });
 
   const form = useAppForm({
-    defaultValues,
+    defaultValues: {
+      email: "",
+      username: "",
+    },
     validators: {
       onChange: createUserFormSchema,
     },

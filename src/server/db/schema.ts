@@ -72,11 +72,6 @@ export const insertUserSchema = createInsertSchema(user, {
   }).max(254, "Cannot exceed 254 characters"),
 }).strict();
 
-// ─── EXAMPLE BUSINESS TABLE ─────────────────────────────────────────────────
-// Demonstrates every pattern to replicate when adding real tables.
-
-// pgEnum is the single source of truth for post.status.
-// The DB enforces valid values natively; zod derives its enum from the same list.
 export const postStatusEnum = pgEnum("post_status", [
   "draft",
   "published",
@@ -135,8 +130,6 @@ export const post = pgTable(
     uniqueIndex("post_nano_id_idx").on(t.nanoId),
   ]
 );
-
-// ── Relations ─────────────────────────────────────────────────────────────────
 
 export const postRelations = relations(post, ({ one }) => ({
   creator: one(user, { fields: [post.creatorId], references: [user.id] }),
