@@ -1,5 +1,10 @@
-import type { z } from "zod/v4";
+import { z } from "zod/v4";
 import { formInputMetaSchema } from "@/lib/zod";
+
+type FormInputMeta = z.infer<typeof formInputMetaSchema>;
+
+export type TextFieldMeta<T extends AllowedCharacters = AllowedCharacters> =
+  Omit<FormInputMeta, "allowedCharacters"> & { allowedCharacters: T };
 
 const schema = formInputMetaSchema.shape.allowedCharacters.unwrap();
 
@@ -91,6 +96,33 @@ const usernameAllowedCharacters = /[^a-z0-9_]/g;
 // allowed at the beginning or end of the string
 // https://regexr.com/8g8lf
 export const usernameRegex = /^[a-z0-9]+(_[a-z0-9]+)*$/g;
+
+export function textField<T extends AllowedCharacters>(meta: TextFieldMeta<T>) {
+  return z
+    .string()
+    .overwrite((value) =>
+      getCleanTextUnicode({
+        value,
+        allowedCharacters: meta.allowedCharacters,
+      })
+    )
+    .meta(meta);
+}
+
+export function usernameField<T extends AllowedCharacters>(
+  meta: TextFieldMeta<T>
+) {
+  return z
+    .string()
+    .overwrite((value) => parseUsernameInput(value))
+    .meta(meta);
+}
+
+export function emailField<T extends AllowedCharacters>(
+  meta: TextFieldMeta<T>
+) {
+  return z.email().meta(meta);
+}
 
 export function parseUsernameInput(value: string) {
   const payload = value

@@ -12,11 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod/v4";
-import {
-  type AllowedCharacters,
-  getCleanTextUnicode,
-  parseUsernameInput,
-} from "@/lib/allowed-chars";
+import { emailField, textField, usernameField } from "@/lib/allowed-chars";
 import { myNanoid, NANO_ID_LENGTH } from "@/lib/constants";
 
 // ─── USER TABLE ──────────────────────────────────────────────────────────────
@@ -55,45 +51,32 @@ export const userRelations = relations(user, ({ many }) => ({
   posts: many(post),
 }));
 
-export const userAllowedCharacters = {
-  username: {
-    letters: true,
-    numbers: true,
-  },
-  email: {
-    letters: true,
-    numbers: true,
-    punctuation: true,
-  },
-} as const satisfies Partial<
-  Record<keyof typeof user.$inferInsert, AllowedCharacters>
->;
-
 export const selectUserSchema = createSelectSchema(user);
 
 export const insertUserSchema = createInsertSchema(user, {
-  username: z
-    .string()
-    .overwrite((v) => parseUsernameInput(v))
+  username: usernameField({
+    allowedCharacters: {
+      letters: true,
+      numbers: true,
+    },
+    label: "Username",
+    placeholder: "my_username",
+  })
     .min(3, "Must be at least 3 characters")
     .max(30, "Cannot exceed 30 characters")
     .regex(
       /^[a-z0-9]+(_[a-z0-9]+)*$/,
       "Only lowercase letters, numbers, and underscores — no leading or trailing underscores"
-    )
-    .meta({
-      label: "Username",
-      placeholder: "my_username",
-      allowedCharacters: userAllowedCharacters.username,
-    }),
-  email: z
-    .email("Must be a valid email address")
-    .max(254, "Cannot exceed 254 characters")
-    .meta({
-      label: "Email",
-      placeholder: "email@example.com",
-      allowedCharacters: userAllowedCharacters.email,
-    }),
+    ),
+  email: emailField({
+    allowedCharacters: {
+      letters: true,
+      numbers: true,
+      punctuation: true,
+    },
+    label: "Email",
+    placeholder: "email@example.com",
+  }).max(254, "Cannot exceed 254 characters"),
 }).strict();
 
 // ─── EXAMPLE BUSINESS TABLE ─────────────────────────────────────────────────
@@ -170,27 +153,6 @@ export const postRelations = relations(post, ({ one }) => ({
 // Drives both the input sanitiser and the keyboard filter in the UI.
 // Co-located here so the constraint, the schema, and the UI config never drift.
 
-export const postAllowedCharacters = {
-  title: {
-    letters: true,
-    spaces: true,
-    numbers: true,
-    punctuation: true,
-    spanish: { letters: true },
-  },
-  content: {
-    letters: true,
-    spaces: true,
-    numbers: true,
-    punctuation: true,
-    newLines: true,
-    currencySymbols: true,
-    spanish: { letters: true, punctuation: true },
-  },
-} as const satisfies Partial<
-  Record<keyof typeof post.$inferInsert, AllowedCharacters>
->;
-
 // ── Schemas ───────────────────────────────────────────────────────────────────
 // selectSchema: used in server-side reads. Exact shape of a DB row.
 // insertSchema: used in forms AND server-side mutations. Single source of
@@ -199,34 +161,31 @@ export const postAllowedCharacters = {
 export const selectPostSchema = createSelectSchema(post);
 
 export const insertPostSchema = createInsertSchema(post, {
-  title: z
-    .string()
-    .overwrite((v) =>
-      getCleanTextUnicode({
-        value: v,
-        allowedCharacters: postAllowedCharacters.title,
-      })
-    )
+  title: textField({
+    allowedCharacters: {
+      letters: true,
+      spaces: true,
+      numbers: true,
+      punctuation: true,
+      spanish: { letters: true },
+    },
+    label: "Title",
+    placeholder: "My post",
+  })
     .min(3, "Must be at least 3 characters")
-    .max(100, "Cannot exceed 100 characters")
-    .meta({
-      label: "Title",
-      placeholder: "My post",
-      allowedCharacters: postAllowedCharacters.title,
-    }),
-  content: z
-    .string()
-    .overwrite((v) =>
-      getCleanTextUnicode({
-        value: v,
-        allowedCharacters: postAllowedCharacters.content,
-      })
-    )
-    .min(1, "Content cannot be empty")
-    .meta({
-      label: "Content",
-      allowedCharacters: postAllowedCharacters.content,
-    }),
+    .max(100, "Cannot exceed 100 characters"),
+  content: textField({
+    allowedCharacters: {
+      letters: true,
+      spaces: true,
+      numbers: true,
+      punctuation: true,
+      newLines: true,
+      currencySymbols: true,
+      spanish: { letters: true, punctuation: true },
+    },
+    label: "Content",
+  }).min(1, "Content cannot be empty"),
   status: z
     .enum(postStatusEnum.enumValues)
     .default("draft")
@@ -272,37 +231,22 @@ export const widget = pgTable(
     index("widget_category_idx").on(t.category),
   ]
 );
-
-export const widgetAllowedCharacters = {
-  name: {
-    letters: true,
-    spaces: true,
-    numbers: true,
-    punctuation: true,
-    spanish: { letters: true },
-  },
-} as const satisfies Partial<
-  Record<keyof typeof widget.$inferInsert, AllowedCharacters>
->;
-
 export const selectWidgetSchema = createSelectSchema(widget);
 
 export const insertWidgetSchema = createInsertSchema(widget, {
-  name: z
-    .string()
-    .overwrite((v) =>
-      getCleanTextUnicode({
-        value: v,
-        allowedCharacters: widgetAllowedCharacters.name,
-      })
-    )
+  name: textField({
+    allowedCharacters: {
+      letters: true,
+      spaces: true,
+      numbers: true,
+      punctuation: true,
+      spanish: { letters: true },
+    },
+    label: "Name",
+    placeholder: "My widget",
+  })
     .min(2, "Must be at least 2 characters")
-    .max(100, "Cannot exceed 100 characters")
-    .meta({
-      label: "Name",
-      placeholder: "My widget",
-      allowedCharacters: widgetAllowedCharacters.name,
-    }),
+    .max(100, "Cannot exceed 100 characters"),
   category: z
     .enum(widgetCategoryEnum.enumValues)
     .default("basic")
