@@ -14,15 +14,15 @@ import type { YearlyRow } from "../lib/amortization";
 const chartConfig = {
   endingBalance: {
     label: "Ending Balance",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
   cumulativeInterest: {
     label: "Cumulative Interest",
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-3)",
   },
   annualPayment: {
     label: "Annual Payment",
-    color: "hsl(var(--chart-3))",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig;
 
@@ -61,7 +61,9 @@ export function AmortizationLineChart({
         <XAxis
           axisLine={false}
           dataKey="year"
+          interval="preserveStartEnd"
           label={{ value: "Year", position: "insideBottomRight", offset: -4 }}
+          tickCount={8}
           tickLine={false}
         />
         <YAxis

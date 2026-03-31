@@ -13,11 +13,11 @@ import {
 const chartConfig = {
   principal: {
     label: "Principal",
-    color: "hsl(var(--chart-1))",
+    color: "var(--chart-1)",
   },
   interest: {
     label: "Interest",
-    color: "hsl(var(--chart-2))",
+    color: "var(--chart-4)",
   },
 } satisfies ChartConfig;
 
