@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AmortizationInputValues } from "./components/amortization-inputs";
 import {
   AmortizationInputs,
@@ -12,9 +12,38 @@ import {
   calculateAmortization,
 } from "./lib/amortization";
 
+const STORAGE_KEY = "amortization-inputs";
+
+function loadInputs(): AmortizationInputValues {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return DEFAULT_INPUTS;
+    }
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "loanAmount" in parsed &&
+      "termYears" in parsed &&
+      "termMonths" in parsed &&
+      "annualInterestRate" in parsed
+    ) {
+      return parsed as AmortizationInputValues;
+    }
+  } catch {
+    // malformed JSON — fall through to defaults
+  }
+  return DEFAULT_INPUTS;
+}
+
 export default function AmortizationPage() {
   const [inputs, setInputs] = useState<AmortizationInputValues>(DEFAULT_INPUTS);
   const [result, setResult] = useState<AmortizationResult | null>(null);
+
+  useEffect(() => {
+    setInputs(loadInputs());
+  }, []);
 
   function handleCalculate() {
     const loanAmount = Number.parseFloat(inputs.loanAmount);
@@ -41,11 +70,13 @@ export default function AmortizationPage() {
       annualInterestRate,
     });
     setResult(computed);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(inputs));
   }
 
   function handleClear() {
     setInputs(DEFAULT_INPUTS);
     setResult(null);
+    // Intentionally does NOT clear localStorage per spec
   }
 
   return (
