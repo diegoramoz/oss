@@ -16,7 +16,7 @@ export function TextInputRaw({
   const field = useFieldContext<string>();
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Input
         id={field.name}
@@ -28,6 +28,6 @@ export function TextInputRaw({
         value={field.state.value}
       />
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

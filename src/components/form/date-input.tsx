@@ -33,7 +33,7 @@ export function DateInput({
     );
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Popover>
         <div>
@@ -63,6 +63,6 @@ export function DateInput({
         </PopoverContent>
       </Popover>
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

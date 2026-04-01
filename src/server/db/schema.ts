@@ -405,4 +405,109 @@ export const insertCreditCardSchema = createInsertSchema(creditCard, {
   brand: enumField(cardBrandEnum.enumValues, { label: "Card Brand" }),
 }).strict();
 
-export default { user, post, widget, bug, plan, creditCard };
+// ─── ADDRESS TABLE ────────────────────────────────────────────────────────────
+
+export const address = pgTable(
+  "address",
+  {
+    id: bigint("id", { mode: "bigint" })
+      .primaryKey()
+      .generatedAlwaysAsIdentity(),
+
+    nanoId: varchar("nano_id", { length: NANO_ID_LENGTH })
+      .$defaultFn(() => myNanoid())
+      .notNull()
+      .unique(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$defaultFn(() => new Date())
+      .$onUpdate(() => new Date())
+      .notNull(),
+
+    creditCardId: bigint("credit_card_id", { mode: "bigint" })
+      .notNull()
+      .references(() => creditCard.id),
+
+    line1: varchar("line1", { length: 200 }).notNull(),
+    line2: varchar("line2", { length: 200 }),
+    city: varchar("city", { length: 100 }).notNull(),
+    state: varchar("state", { length: 100 }).notNull(),
+    postalCode: varchar("postal_code", { length: 20 }).notNull(),
+    country: varchar("country", { length: 100 }).notNull(),
+  },
+  (t) => [
+    uniqueIndex("address_nano_id_idx").on(t.nanoId),
+    index("address_credit_card_id_idx").on(t.creditCardId),
+  ]
+);
+
+export const creditCardRelations = relations(creditCard, ({ one }) => ({
+  address: one(address, {
+    fields: [creditCard.id],
+    references: [address.creditCardId],
+  }),
+}));
+
+export const addressRelations = relations(address, ({ one }) => ({
+  creditCard: one(creditCard, {
+    fields: [address.creditCardId],
+    references: [creditCard.id],
+  }),
+}));
+
+export const selectAddressSchema = createSelectSchema(address);
+
+export const insertAddressSchema = createInsertSchema(address, {
+  line1: textField({
+    chars: { preset: "prose" },
+    label: "Address Line 1",
+    placeholder: "123 Main St",
+  })
+    .min(1, "Required")
+    .max(200, "Cannot exceed 200 characters"),
+  line2: textField({
+    chars: { preset: "prose" },
+    label: "Address Line 2",
+    placeholder: "Apt 4B",
+  })
+    .max(200, "Cannot exceed 200 characters")
+    .optional()
+    .meta({
+      label: "Address Line 2",
+      placeholder: "Apt 4B",
+      chars: { preset: "prose" },
+    }),
+  city: textField({
+    chars: { preset: "prose" },
+    label: "City",
+    placeholder: "New York",
+  })
+    .min(1, "Required")
+    .max(100, "Cannot exceed 100 characters"),
+  state: textField({
+    chars: { preset: "prose" },
+    label: "State / Province",
+    placeholder: "NY",
+  })
+    .min(1, "Required")
+    .max(100, "Cannot exceed 100 characters"),
+  postalCode: textField({
+    chars: { custom: ["letters", "numbers"] },
+    label: "Postal Code",
+    placeholder: "10001",
+  })
+    .min(1, "Required")
+    .max(20, "Cannot exceed 20 characters"),
+  country: textField({
+    chars: { preset: "prose" },
+    label: "Country",
+    placeholder: "United States",
+  })
+    .min(1, "Required")
+    .max(100, "Cannot exceed 100 characters"),
+}).strict();
+
+export default { user, post, widget, bug, plan, creditCard, address };

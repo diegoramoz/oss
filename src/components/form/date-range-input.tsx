@@ -36,7 +36,7 @@ export function DateRangeInput({
     );
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Popover>
         <div>
@@ -72,6 +72,6 @@ export function DateRangeInput({
         </PopoverContent>
       </Popover>
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

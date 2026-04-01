@@ -8,14 +8,14 @@ import { Form, useAppForm } from "@/components/form";
 import { Button } from "@/components/ui/button";
 import { orpc } from "@/lib/orpc";
 import type { CardBrand, ExpiryMonth } from "@/server/db/schema";
-import { insertCreditCardSchema } from "@/server/db/schema";
+import {
+  insertAddressSchema,
+  insertCreditCardSchema,
+} from "@/server/db/schema";
 
 // ─── Form-level schema ────────────────────────────────────────────────────────
-// Derived from the DB insert schema. cardholderName validation is reused directly.
-// cardNumber and cvv are UI-only (not stored); expiryMonth/Year use string selects
-// in the form and are converted to numbers before hitting the server.
 
-export const creditCardFormSchema = insertCreditCardSchema
+export const paymentFormSchema = insertCreditCardSchema
   .pick({ cardholderName: true, expiryMonth: true, expiryYear: true })
   .extend({
     cardNumber: z
@@ -31,6 +31,20 @@ export const creditCardFormSchema = insertCreditCardSchema
       .max(4, "Cannot exceed 4 digits")
       .regex(/^\d+$/, "Must contain only digits")
       .meta({ label: "CVV", placeholder: "123" }),
+    // address fields — line2 kept as string (not optional) for controlled input
+    line1: insertAddressSchema.shape.line1,
+    line2: z
+      .string()
+      .max(200, "Cannot exceed 200 characters")
+      .meta({
+        label: "Address Line 2",
+        placeholder: "Apt 4B",
+        chars: { preset: "prose" },
+      }),
+    city: insertAddressSchema.shape.city,
+    state: insertAddressSchema.shape.state,
+    postalCode: insertAddressSchema.shape.postalCode,
+    country: insertAddressSchema.shape.country,
   });
 
 // ─── Month / Year options ─────────────────────────────────────────────────────
@@ -92,25 +106,37 @@ export function CreditCardForm() {
       cvv: "",
       expiryMonth: "",
       expiryYear: "",
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
     },
     validators: {
-      onChange: creditCardFormSchema,
+      onChange: paymentFormSchema,
     },
     onSubmit: async ({ value }) => {
       try {
-        toast("Saving card…");
+        toast("Saving…");
         const digits = value.cardNumber.replace(/\s/g, "");
-        await orpc.creditCard.create({
+        await orpc.creditCard.createWithAddress({
           cardholderName: value.cardholderName,
           lastFourDigits: digits.slice(-4),
           expiryMonth: value.expiryMonth as ExpiryMonth,
           expiryYear: value.expiryYear,
           brand: detectBrand(value.cardNumber),
+          line1: value.line1,
+          line2: value.line2,
+          city: value.city,
+          state: value.state,
+          postalCode: value.postalCode,
+          country: value.country,
         });
-        toast("Card saved successfully!");
+        toast("Payment method saved!");
         router.push("/");
       } catch {
-        toast("Error saving card");
+        toast("Error saving payment method");
       }
     },
   });
@@ -123,22 +149,22 @@ export function CreditCardForm() {
         form.handleSubmit();
       }}
     >
+      <h2 className="font-semibold text-base">Card Details</h2>
+
       <form.AppField name="cardholderName">
         {(field) => (
-          <field.TextInput schema={creditCardFormSchema.shape.cardholderName} />
+          <field.TextInput schema={paymentFormSchema.shape.cardholderName} />
         )}
       </form.AppField>
 
       <form.AppField name="cardNumber">
         {(field) => (
-          <field.CardNumberInput
-            schema={creditCardFormSchema.shape.cardNumber}
-          />
+          <field.CardNumberInput schema={paymentFormSchema.shape.cardNumber} />
         )}
       </form.AppField>
 
       <form.AppField name="cvv">
-        {(field) => <field.CvvInput schema={creditCardFormSchema.shape.cvv} />}
+        {(field) => <field.CvvInput schema={paymentFormSchema.shape.cvv} />}
       </form.AppField>
 
       <div className="grid grid-cols-2 gap-3">
@@ -146,7 +172,7 @@ export function CreditCardForm() {
           {(field) => (
             <field.SelectInput
               items={MONTH_OPTIONS}
-              schema={creditCardFormSchema.shape.expiryMonth}
+              schema={paymentFormSchema.shape.expiryMonth}
             />
           )}
         </form.AppField>
@@ -155,8 +181,44 @@ export function CreditCardForm() {
           {(field) => (
             <field.SelectInput
               items={YEAR_OPTIONS}
-              schema={creditCardFormSchema.shape.expiryYear}
+              schema={paymentFormSchema.shape.expiryYear}
             />
+          )}
+        </form.AppField>
+      </div>
+
+      <h2 className="mt-2 font-semibold text-base">Billing Address</h2>
+
+      <form.AppField name="line1">
+        {(field) => <field.TextInput schema={paymentFormSchema.shape.line1} />}
+      </form.AppField>
+
+      <form.AppField name="line2">
+        {(field) => <field.TextInput schema={paymentFormSchema.shape.line2} />}
+      </form.AppField>
+
+      <div className="grid grid-cols-2 gap-3">
+        <form.AppField name="city">
+          {(field) => <field.TextInput schema={paymentFormSchema.shape.city} />}
+        </form.AppField>
+
+        <form.AppField name="state">
+          {(field) => (
+            <field.TextInput schema={paymentFormSchema.shape.state} />
+          )}
+        </form.AppField>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <form.AppField name="postalCode">
+          {(field) => (
+            <field.TextInput schema={paymentFormSchema.shape.postalCode} />
+          )}
+        </form.AppField>
+
+        <form.AppField name="country">
+          {(field) => (
+            <field.TextInput schema={paymentFormSchema.shape.country} />
           )}
         </form.AppField>
       </div>
@@ -165,7 +227,7 @@ export function CreditCardForm() {
         {([canSubmit]) => (
           <Button className="mt-2" disabled={canSubmit === false} type="submit">
             <Save />
-            Save Card
+            Save Payment Method
           </Button>
         )}
       </form.Subscribe>

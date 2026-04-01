@@ -19,7 +19,7 @@ export function CardNumberInput({
   const field = useFieldContext<string>();
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Input
         autoComplete="cc-number"
@@ -38,6 +38,6 @@ export function CardNumberInput({
         value={field.state.value}
       />
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

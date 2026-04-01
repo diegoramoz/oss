@@ -41,7 +41,7 @@ export function TextAreaInput({
   });
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Textarea
         id={field.name}
@@ -54,6 +54,6 @@ export function TextAreaInput({
         value={field.state.value}
       />
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

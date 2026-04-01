@@ -10,7 +10,7 @@ export function CvvInput({ schema }: { schema?: ZodType<unknown, unknown> }) {
   const field = useFieldContext<string>();
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Input
         autoComplete="cc-csc"
@@ -29,6 +29,6 @@ export function CvvInput({ schema }: { schema?: ZodType<unknown, unknown> }) {
         value={field.state.value}
       />
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

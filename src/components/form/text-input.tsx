@@ -25,7 +25,7 @@ export function TextInput({ schema }: { schema?: ZodType<unknown, unknown> }) {
   });
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Input
         id={field.name}
@@ -37,6 +37,6 @@ export function TextInput({ schema }: { schema?: ZodType<unknown, unknown> }) {
         value={field.state.value}
       />
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

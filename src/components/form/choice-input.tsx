@@ -27,7 +27,7 @@ export function ChoiceInput({
     const [itemValue, displayName] = first;
 
     return (
-      <>
+      <div>
         <Label htmlFor={field.name} schema={schema} />
         <Toggle
           id={field.name}
@@ -42,7 +42,7 @@ export function ChoiceInput({
           {displayName}
         </Toggle>
         <FieldInfo field={field} />
-      </>
+      </div>
     );
   }
 
@@ -58,7 +58,7 @@ export function ChoiceInput({
     : ([] as string[]);
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <ToggleGroup
         className="w-full flex-col items-stretch gap-3"
@@ -87,6 +87,6 @@ export function ChoiceInput({
         ))}
       </ToggleGroup>
       <FieldInfo field={field} />
-    </>
+    </div>
   );
 }

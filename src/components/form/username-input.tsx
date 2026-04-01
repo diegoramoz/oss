@@ -13,7 +13,7 @@ export function UsernameInput({
   const field = useFieldContext<string>();
 
   return (
-    <>
+    <div>
       <Label htmlFor={field.name} schema={schema} />
       <Input
         id={field.name}
@@ -24,6 +24,6 @@ export function UsernameInput({
         value={field.state.value}
       />
       <FieldInfo field={field} schema={schema} />
-    </>
+    </div>
   );
 }

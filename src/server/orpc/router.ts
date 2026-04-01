@@ -3,8 +3,10 @@ import { eq } from "drizzle-orm";
 import { z } from "zod/v4";
 import { db } from "@/server/db";
 import {
+  address as addressTable,
   bug as bugTable,
   creditCard as creditCardTable,
+  insertAddressSchema,
   insertBugSchema,
   insertCreditCardSchema,
   insertPlanSchema,
@@ -111,6 +113,38 @@ const planRouter = {
     }),
 };
 
+const addressRouter = {
+  create: os
+    .input(
+      insertAddressSchema
+        .omit({
+          updatedAt: true,
+          createdAt: true,
+          nanoId: true,
+          creditCardId: true,
+        })
+        .extend({ creditCardNanoId: z.string() })
+    )
+    .handler(async ({ input }) => {
+      const { creditCardNanoId, ...addressData } = input;
+      const [card] = await db
+        .select({ id: creditCardTable.id })
+        .from(creditCardTable)
+        .where(eq(creditCardTable.nanoId, creditCardNanoId));
+      if (!card) {
+        throw new Error("Credit card not found");
+      }
+      const [addr] = await db
+        .insert(addressTable)
+        .values({ ...addressData, creditCardId: card.id })
+        .returning();
+      if (!addr) {
+        throw new Error("Failed to save address");
+      }
+      return { address: addr };
+    }),
+};
+
 const creditCardRouter = {
   create: os
     .input(
@@ -127,6 +161,50 @@ const creditCardRouter = {
       }
       return { creditCard: card };
     }),
+
+  createWithAddress: os
+    .input(
+      z.object({
+        cardholderName: insertCreditCardSchema.shape.cardholderName,
+        lastFourDigits: insertCreditCardSchema.shape.lastFourDigits,
+        expiryMonth: insertCreditCardSchema.shape.expiryMonth,
+        expiryYear: insertCreditCardSchema.shape.expiryYear,
+        brand: insertCreditCardSchema.shape.brand,
+        line1: insertAddressSchema.shape.line1,
+        line2: insertAddressSchema.shape.line2,
+        city: insertAddressSchema.shape.city,
+        state: insertAddressSchema.shape.state,
+        postalCode: insertAddressSchema.shape.postalCode,
+        country: insertAddressSchema.shape.country,
+      })
+    )
+    .handler(async ({ input }) => {
+      const { line1, line2, city, state, postalCode, country, ...cardData } =
+        input;
+      const [card] = await db
+        .insert(creditCardTable)
+        .values(cardData)
+        .returning();
+      if (!card) {
+        throw new Error("Failed to save credit card");
+      }
+      const [addr] = await db
+        .insert(addressTable)
+        .values({
+          line1,
+          line2,
+          city,
+          state,
+          postalCode,
+          country,
+          creditCardId: card.id,
+        })
+        .returning();
+      if (!addr) {
+        throw new Error("Failed to save address");
+      }
+      return { creditCard: card, address: addr };
+    }),
 };
 
 export const appRouter = {
@@ -135,6 +213,7 @@ export const appRouter = {
   bug: bugRouter,
   plan: planRouter,
   creditCard: creditCardRouter,
+  address: addressRouter,
 };
 
 export type AppRouter = typeof appRouter;
