@@ -4,8 +4,8 @@ import { PRIMITIVES_NAV } from "@/components/nav/primitives";
 const SLUG_PATTERN = /^[a-z][a-z0-9-]*$/;
 
 describe("PRIMITIVES_NAV", () => {
-  it("contains at least one entry", () => {
-    expect(PRIMITIVES_NAV.length).toBeGreaterThan(0);
+  it("contains all 14 primitives", () => {
+    expect(PRIMITIVES_NAV).toHaveLength(14);
   });
 
   it("every entry has a name, description, href, icon, and activePatterns", () => {
@@ -33,12 +33,29 @@ describe("PRIMITIVES_NAV", () => {
     }
   });
 
-  it("includes text-input", () => {
-    const textInput = PRIMITIVES_NAV.find(
-      (e) => e.href === "/primitives/text-input"
+  it("includes all expected slugs", () => {
+    const expectedSlugs = [
+      "card-number-input",
+      "choice-input",
+      "country-code-input",
+      "currency-input",
+      "cvv-input",
+      "date-input",
+      "date-range-input",
+      "decimal-input",
+      "phone-number-input",
+      "select-input",
+      "text-area-input",
+      "text-input",
+      "text-input-raw",
+      "username-input",
+    ];
+    const actualSlugs = PRIMITIVES_NAV.map((e) =>
+      e.href.replace("/primitives/", "")
     );
-    expect(textInput).toBeDefined();
-    expect(textInput?.name).toBe("Text Input");
+    for (const slug of expectedSlugs) {
+      expect(actualSlugs).toContain(slug);
+    }
   });
 
   it("activePatterns include the href itself and a wildcard", () => {
