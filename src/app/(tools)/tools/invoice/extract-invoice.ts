@@ -1,5 +1,7 @@
 "use server";
 
+import { extractInvoiceFromOllama } from "@/server/ollama";
+
 export type ExtractedInvoice = {
   merchant: string;
   date: string;
@@ -31,14 +33,18 @@ export async function extractInvoice(
     );
   }
 
-  // Stub: return empty values — Ollama extraction is wired in ISSUE-004
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  const extracted = await extractInvoiceFromOllama(buffer, file.type);
+
   return {
-    merchant: "",
-    date: new Date().toISOString().slice(0, 10),
-    amount: "0.00",
-    currency: "USD",
-    category: "",
-    description: "",
-    tax: "0.00",
+    merchant: extracted.merchant,
+    date: extracted.date || new Date().toISOString().slice(0, 10),
+    amount: extracted.amount || "0.00",
+    currency: extracted.currency || "USD",
+    category: extracted.category,
+    description: extracted.description,
+    tax: extracted.tax || "0.00",
   };
 }
