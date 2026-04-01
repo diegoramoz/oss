@@ -1,4 +1,4 @@
-import { InvoiceTable } from "./invoice-table";
+import { InvoiceSection } from "./invoice-section";
 
 export default function InvoicePage() {
   return (
@@ -10,10 +10,7 @@ export default function InvoicePage() {
         </p>
       </div>
 
-      <section className="mt-8">
-        <h2 className="mb-3 font-semibold text-lg">Recorded Invoices</h2>
-        <InvoiceTable />
-      </section>
+      <InvoiceSection />
     </main>
   );
 }

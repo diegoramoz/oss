@@ -6,8 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,9 +38,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import { orpc } from "@/lib/orpc";
 
-type Invoice = {
+export type Invoice = {
   nanoId: string;
   merchant: string;
   date: string;
@@ -52,8 +50,6 @@ type Invoice = {
   tax: string;
 };
 
-type EditState = Invoice;
-
 function EditDialog({
   invoice,
   onSave,
@@ -62,7 +58,7 @@ function EditDialog({
   onSave: (nanoId: string, data: Partial<Invoice>) => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<EditState>(invoice);
+  const [form, setForm] = useState<Invoice>(invoice);
   const [saving, setSaving] = useState(false);
 
   function reset() {
@@ -72,15 +68,7 @@ function EditDialog({
   async function handleSave() {
     setSaving(true);
     try {
-      await onSave(invoice.nanoId, {
-        merchant: form.merchant,
-        date: form.date,
-        amount: form.amount,
-        currency: form.currency,
-        category: form.category,
-        description: form.description,
-        tax: form.tax,
-      });
+      await onSave(invoice.nanoId, form);
       setOpen(false);
     } finally {
       setSaving(false);
@@ -110,7 +98,9 @@ function EditDialog({
               </label>
               <Input
                 id="merchant"
-                onChange={(e) => setForm((f) => ({ ...f, merchant: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, merchant: e.target.value }))
+                }
                 value={form.merchant}
               />
             </div>
@@ -120,7 +110,9 @@ function EditDialog({
               </label>
               <Input
                 id="date"
-                onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, date: e.target.value }))
+                }
                 type="date"
                 value={form.date.slice(0, 10)}
               />
@@ -133,7 +125,9 @@ function EditDialog({
               </label>
               <Input
                 id="amount"
-                onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, amount: e.target.value }))
+                }
                 value={form.amount}
               />
             </div>
@@ -143,7 +137,9 @@ function EditDialog({
               </label>
               <Input
                 id="currency"
-                onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, currency: e.target.value }))
+                }
                 value={form.currency}
               />
             </div>
@@ -155,7 +151,9 @@ function EditDialog({
               </label>
               <Input
                 id="tax"
-                onChange={(e) => setForm((f) => ({ ...f, tax: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, tax: e.target.value }))
+                }
                 value={form.tax}
               />
             </div>
@@ -165,7 +163,9 @@ function EditDialog({
               </label>
               <Input
                 id="category"
-                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, category: e.target.value }))
+                }
                 value={form.category}
               />
             </div>
@@ -176,18 +176,16 @@ function EditDialog({
             </label>
             <Textarea
               id="description"
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
               rows={2}
               value={form.description}
             />
           </div>
         </div>
         <DialogFooter>
-          <Button
-            disabled={saving}
-            onClick={handleSave}
-            type="button"
-          >
+          <Button disabled={saving} onClick={handleSave} type="button">
             {saving ? "Saving…" : "Save"}
           </Button>
         </DialogFooter>
@@ -224,7 +222,9 @@ function makeColumns(
           <div className="flex items-center gap-2">
             <EditDialog invoice={invoice} onSave={onEdit} />
             <AlertDialog>
-              <AlertDialogTrigger render={<Button size="sm" variant="destructive" />}>
+              <AlertDialogTrigger
+                render={<Button size="sm" variant="destructive" />}
+              >
                 Delete
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -250,76 +250,20 @@ function makeColumns(
   ];
 }
 
-export function InvoiceTable() {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
-  const [loading, setLoading] = useState(true);
+interface InvoiceTableProps {
+  invoices: Invoice[];
+  loading: boolean;
+  onEdit: (nanoId: string, data: Partial<Invoice>) => Promise<void>;
+  onDelete: (nanoId: string) => Promise<void>;
+}
 
-  const fetchInvoices = useCallback(async () => {
-    try {
-      const data = await orpc.invoice.list();
-      setInvoices(
-        data.map((inv) => ({
-          nanoId: inv.nanoId,
-          merchant: inv.merchant,
-          date: typeof inv.date === "string" ? inv.date : inv.date.toISOString(),
-          amount: inv.amount,
-          currency: inv.currency,
-          category: inv.category,
-          description: inv.description,
-          tax: inv.tax,
-        }))
-      );
-    } catch {
-      toast.error("Failed to load invoices");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void fetchInvoices();
-  }, [fetchInvoices]);
-
-  const handleEdit = useCallback(
-    async (nanoId: string, data: Partial<Invoice>) => {
-      try {
-        await orpc.invoice.update({
-          nanoId,
-          data: {
-            ...(data.merchant !== undefined && { merchant: data.merchant }),
-            ...(data.date !== undefined && { date: new Date(data.date) }),
-            ...(data.amount !== undefined && { amount: data.amount }),
-            ...(data.currency !== undefined && { currency: data.currency }),
-            ...(data.category !== undefined && { category: data.category }),
-            ...(data.description !== undefined && {
-              description: data.description,
-            }),
-            ...(data.tax !== undefined && { tax: data.tax }),
-          },
-        });
-        toast.success("Invoice updated");
-        await fetchInvoices();
-      } catch {
-        toast.error("Failed to update invoice");
-      }
-    },
-    [fetchInvoices]
-  );
-
-  const handleDelete = useCallback(
-    async (nanoId: string) => {
-      try {
-        await orpc.invoice.delete({ nanoId });
-        toast.success("Invoice deleted");
-        await fetchInvoices();
-      } catch {
-        toast.error("Failed to delete invoice");
-      }
-    },
-    [fetchInvoices]
-  );
-
-  const columns = makeColumns(handleEdit, handleDelete);
+export function InvoiceTable({
+  invoices,
+  loading,
+  onEdit,
+  onDelete,
+}: InvoiceTableProps) {
+  const columns = makeColumns(onEdit, onDelete);
 
   const table = useReactTable({
     data: invoices,

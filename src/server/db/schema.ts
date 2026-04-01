@@ -555,6 +555,8 @@ export const insertInvoiceSchema = createInsertSchema(invoice, {
   })
     .min(1, "Required")
     .max(200, "Cannot exceed 200 characters"),
+  // z.coerce.date() accepts ISO strings (e.g. from JSON serialization over RPC)
+  date: z.coerce.date(),
   currency: textField({
     chars: { custom: ["letters"] },
     label: "Currency",
