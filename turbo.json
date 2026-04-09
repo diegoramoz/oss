@@ -7,7 +7,10 @@
     "POLAR_ACCESS_TOKEN",
     "POLAR_SUCCESS_URL",
     "CORS_ORIGIN",
-    "DATABASE_URL"
+    "DATABASE_URL",
+    "UPLOADTHING_TOKEN",
+    "UPLOADTHING_APP_ID",
+    "RESEND_API_KEY"
   ],
   "tasks": {
     "build": {
