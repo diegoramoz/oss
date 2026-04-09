@@ -1,14 +1,12 @@
 import { Button } from "@oss/ui/components/button";
 import { Input } from "@oss/ui/components/input";
 import { Label } from "@oss/ui/components/label";
+import { Loader } from "@oss/ui/components/loader";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import z from "zod";
-
 import { authClient } from "@/lib/auth-client";
-
-import Loader from "./loader";
 
 export default function SignInForm({
 	onSwitchToSignUp,
