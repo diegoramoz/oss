@@ -1,6 +1,20 @@
 import { Dashboard } from "@/app/dashboard";
+import "@/utils/orpc.server";
+import { orpc } from "@/utils/orpc";
 
-export default function Page() {
+export default async function Page() {
+	const data = await orpc.invoice.list();
+	const invoices = data.map((inv) => ({
+		nanoId: inv.nanoId,
+		merchant: inv.merchant,
+		date: typeof inv.date === "string" ? inv.date : inv.date.toISOString(),
+		amount: inv.amount,
+		currency: inv.currency,
+		category: inv.category,
+		description: inv.description,
+		tax: inv.tax,
+	}));
+
 	return (
 		<main className="mx-auto max-w-5xl px-4 py-8">
 			<div className="mb-6">
@@ -10,7 +24,7 @@ export default function Page() {
 				</p>
 			</div>
 
-			<Dashboard />
+			<Dashboard initialInvoices={invoices} />
 		</main>
 	);
 }
