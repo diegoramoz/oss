@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --port 3002",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:seed": "bun ./scripts/seed.ts"
   },
   "dependencies": {
     "@better-auth/passkey": "catalog:",
@@ -36,6 +37,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@faker-js/faker": "catalog:",
     "@oss/config": "workspace:*",
     "@tailwindcss/postcss": "^4.1.18",
     "@tanstack/react-query-devtools": "^5.91.1",

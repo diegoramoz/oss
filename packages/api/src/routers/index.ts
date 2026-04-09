@@ -19,7 +19,7 @@ import {
 } from "@oss/db/schema";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
-import { protectedProcedure, publicProcedure } from "../index";
+import { protectedProcedure, publicProcedure } from "..";
 
 // export const appRouter = {
 // 	healthCheck: publicProcedure.handler(() => {
@@ -281,7 +281,7 @@ const invoiceRouter = {
 			}
 		}),
 
-	list: protectedProcedure.handler(async () => {
+	list: publicProcedure.handler(async () => {
 		return await db
 			.select()
 			.from(invoiceTable)

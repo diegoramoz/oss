@@ -119,23 +119,12 @@
       "name": "web",
       "version": "0.1.0",
       "dependencies": {
-        "@better-auth/passkey": "catalog:",
-        "@orpc/client": "catalog:",
-        "@orpc/openapi": "catalog:",
-        "@orpc/server": "catalog:",
-        "@orpc/tanstack-query": "catalog:",
-        "@orpc/zod": "catalog:",
-        "@oss/api": "workspace:*",
-        "@oss/auth": "workspace:*",
         "@oss/env": "workspace:*",
         "@oss/shared": "workspace:*",
         "@oss/ui": "workspace:*",
-        "@polar-sh/better-auth": "catalog:",
         "@tanstack/react-form": "catalog:",
         "@tanstack/react-query": "catalog:",
-        "@uploadthing/react": "^7.3.3",
         "babel-plugin-react-compiler": "^1.0.0",
-        "better-auth": "catalog:",
         "dotenv": "catalog:",
         "lucide-react": "catalog:",
         "next": "catalog:",
@@ -143,7 +132,6 @@
         "react": "^19.2.3",
         "react-dom": "^19.2.3",
         "sonner": "catalog:",
-        "uploadthing": "^7.7.4",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -213,6 +201,7 @@
         "zod": "catalog:",
       },
       "devDependencies": {
+        "@faker-js/faker": "catalog:",
         "@oss/config": "workspace:*",
         "drizzle-kit": "^0.31.8",
         "typescript": "^5",
@@ -276,6 +265,7 @@
   "catalog": {
     "@better-auth/expo": "^1.5.6",
     "@better-auth/passkey": "^1.5.6",
+    "@faker-js/faker": "^9.8.0",
     "@icons-pack/react-simple-icons": "^13.13.0",
     "@orpc/client": "^1.12.2",
     "@orpc/openapi": "^1.12.2",
@@ -665,6 +655,8 @@
     "@expo/ws-tunnel": ["@expo/ws-tunnel@1.0.6", "", {}, "sha512-nDRbLmSrJar7abvUjp3smDwH8HcbZcoOEa5jVPUv9/9CajgmWw20JNRwTuBRzWIWIkEJDkz20GoNA+tSwUqk0Q=="],
 
     "@expo/xcpretty": ["@expo/xcpretty@4.4.1", "", { "dependencies": { "@babel/code-frame": "^7.20.0", "chalk": "^4.1.0", "js-yaml": "^4.1.0" }, "bin": { "excpretty": "build/cli.js" } }, "sha512-KZNxZvnGCtiM2aYYZ6Wz0Ix5r47dAvpNLApFtZWnSoERzAdOMzVBOPysBoM0JlF6FKWZ8GPqgn6qt3dV/8Zlpg=="],
+
+    "@faker-js/faker": ["@faker-js/faker@9.9.0", "", {}, "sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA=="],
 
     "@floating-ui/core": ["@floating-ui/core@1.7.5", "", { "dependencies": { "@floating-ui/utils": "^0.2.11" } }, "sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ=="],
 
