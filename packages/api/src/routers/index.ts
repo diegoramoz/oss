@@ -16,6 +16,7 @@ import {
 	user as userTable,
 	widget as widgetTable,
 } from "@oss/db/schema";
+import { env } from "@oss/env/server";
 import { extractInvoiceFromOllama } from "@oss/llm/extract";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
@@ -246,8 +247,8 @@ const invoiceRouter = {
 				);
 			}
 			const buffer = Buffer.from(input.fileBase64, "base64");
-			const cfClientId = process.env.CF_ACCESS_CLIENT_ID;
-			const cfClientSecret = process.env.CF_ACCESS_CLIENT_SECRET;
+			const cfClientId = env.CF_ACCESS_CLIENT_ID;
+			const cfClientSecret = env.CF_ACCESS_CLIENT_SECRET;
 			const cfHeaders =
 				cfClientId && cfClientSecret
 					? {

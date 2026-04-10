@@ -18,6 +18,7 @@
     "@neondatabase/serverless": "^1.0.2",
     "@oss/env": "workspace:*",
     "@oss/shared": "workspace:*",
+    "@t3-oss/env-core": "^0.13.1",
     "dotenv": "catalog:",
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",

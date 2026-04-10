@@ -26,7 +26,6 @@
     "@tanstack/react-form": "catalog:",
     "@tanstack/react-query": "catalog:",
     "better-auth": "catalog:",
-    "dotenv": "catalog:",
     "expo": "^55.0.0",
     "expo-constants": "~55.0.7",
     "expo-font": "~55.0.4",

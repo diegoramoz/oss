@@ -8,16 +8,13 @@
  *   OLLAMA_MODEL=llava bun run start
  */
 
-import { resolve } from "node:path";
 import type { Subprocess } from "bun";
-import { config as loadDotenv } from "dotenv";
+import { env } from "@/env";
 import { isModelInList } from "@/ollama-utils";
 import { spawnTunnel } from "./tunnel";
 
-loadDotenv({ path: resolve(import.meta.dir, "../.env") });
-
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "llama3.2-vision";
-const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
+const OLLAMA_MODEL = env.OLLAMA_MODEL;
+const OLLAMA_URL = env.OLLAMA_URL;
 const POLL_INTERVAL_MS = 500;
 const POLL_TIMEOUT_MS = 30_000;
 
@@ -76,7 +73,7 @@ async function main() {
 		process.exit(1);
 	}
 
-	const CF_TUNNEL_TOKEN = process.env.CF_TUNNEL_TOKEN;
+	const CF_TUNNEL_TOKEN = env.CF_TUNNEL_TOKEN;
 	if (!CF_TUNNEL_TOKEN) {
 		console.error(
 			"[llm] ERROR: CF_TUNNEL_TOKEN is not set.\n" +
@@ -113,7 +110,7 @@ async function main() {
 			await pullModel(OLLAMA_MODEL);
 		}
 
-		tunnelProc = spawnTunnel(CF_TUNNEL_TOKEN, process.env.CF_TUNNEL_HOSTNAME);
+		tunnelProc = spawnTunnel(CF_TUNNEL_TOKEN, env.CF_TUNNEL_HOSTNAME);
 
 		log(`Ready. Model: ${OLLAMA_MODEL}  Endpoint: ${OLLAMA_URL}`);
 

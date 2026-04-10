@@ -1,4 +1,6 @@
-if (process.env.NODE_ENV !== "development") {
+import { env } from "@oss/env/server";
+
+if (env.NODE_ENV !== "development") {
 	throw new Error("Seed script can only run in development environment");
 }
 

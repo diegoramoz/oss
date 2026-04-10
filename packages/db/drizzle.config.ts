@@ -1,8 +1,13 @@
-import dotenv from "dotenv";
+import { createEnv } from "@t3-oss/env-core";
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
+import { z } from "zod";
 
-dotenv.config({
-	path: "../../apps/finance/.env",
+config({ path: "../../apps/finance/.env" });
+
+const env = createEnv({
+	server: { DATABASE_URL: z.string().min(1) },
+	runtimeEnv: process.env,
 });
 
 export default defineConfig({
@@ -10,6 +15,6 @@ export default defineConfig({
 	out: "./src/migrations",
 	dialect: "postgresql",
 	dbCredentials: {
-		url: process.env.DATABASE_URL || "",
+		url: env.DATABASE_URL,
 	},
 });

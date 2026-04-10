@@ -9,11 +9,8 @@
  * Also exported as `spawnTunnel()` for use inside start.ts.
  */
 
-import { resolve } from "node:path";
 import type { Subprocess } from "bun";
-import { config as loadDotenv } from "dotenv";
-
-loadDotenv({ path: resolve(import.meta.dir, "../.env") });
+import { env } from "@/env";
 
 function log(msg: string) {
 	console.log(`[llm:tunnel] ${msg}`);
@@ -42,7 +39,7 @@ export function spawnTunnel(token: string, hostname?: string): Subprocess {
 }
 
 async function main() {
-	const token = process.env.CF_TUNNEL_TOKEN;
+	const token = env.CF_TUNNEL_TOKEN;
 	if (!token) {
 		console.error(
 			"[llm:tunnel] ERROR: CF_TUNNEL_TOKEN is not set.\n" +
@@ -51,7 +48,7 @@ async function main() {
 		process.exit(1);
 	}
 
-	const tunnelProc = spawnTunnel(token, process.env.CF_TUNNEL_HOSTNAME);
+	const tunnelProc = spawnTunnel(token, env.CF_TUNNEL_HOSTNAME);
 
 	const cleanup = () => {
 		log("Shutting down tunnel…");
