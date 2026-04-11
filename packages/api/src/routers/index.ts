@@ -20,7 +20,7 @@ import { env } from "@oss/env/server";
 import { desc, eq } from "drizzle-orm";
 import { z } from "zod/v4";
 import { protectedProcedure, publicProcedure } from "..";
-import { extractInvoiceFromOllama } from "../ollama";
+import { extractInvoiceFromOllama, pingOllama } from "../ollama";
 
 // export const appRouter = {
 // 	healthCheck: publicProcedure.handler(() => {
@@ -375,6 +375,14 @@ const pingRouter = {
 	}),
 };
 
+const ollamaRouter = {
+	/**
+	 * Pings the Ollama instance via its Cloudflare Tunnel and checks whether
+	 * the configured model is pulled and ready to handle image requests.
+	 */
+	ping: publicProcedure.handler(() => pingOllama()),
+};
+
 export const appRouter = {
 	widget: widgetRouter,
 	user: userRouter,
@@ -384,6 +392,7 @@ export const appRouter = {
 	address: addressRouter,
 	invoice: invoiceRouter,
 	ping: pingRouter,
+	ollama: ollamaRouter,
 };
 
 export type AppRouter = typeof appRouter;

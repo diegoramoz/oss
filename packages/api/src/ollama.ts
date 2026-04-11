@@ -1,5 +1,50 @@
 import { env } from "@oss/env/server";
 
+export type OllamaPingResult =
+	| { ok: true; model: string; modelReady: boolean; via: string }
+	| { ok: false; error: string; via: string };
+
+type OllamaTagsResponse = {
+	models?: { name: string }[];
+};
+
+/**
+ * Check whether the Ollama instance is reachable and the configured model is
+ * available. Passes Cloudflare Access service-token headers when configured.
+ */
+export async function pingOllama(): Promise<OllamaPingResult> {
+	const ollamaUrl = env.OLLAMA_URL ?? "http://localhost:11434";
+	const model = env.OLLAMA_MODEL;
+	const via = `${ollamaUrl}/api/tags`;
+
+	const cfClientId = env.CF_ACCESS_CLIENT_ID;
+	const cfClientSecret = env.CF_ACCESS_CLIENT_SECRET;
+	const headers: Record<string, string> =
+		cfClientId && cfClientSecret
+			? {
+					"CF-Access-Client-Id": cfClientId,
+					"CF-Access-Client-Secret": cfClientSecret,
+				}
+			: {};
+
+	try {
+		const res = await fetch(via, { headers });
+		if (!res.ok) {
+			return { ok: false, error: `HTTP ${res.status} ${res.statusText}`, via };
+		}
+		const json = (await res.json()) as OllamaTagsResponse;
+		const modelBase = model.split(":")[0];
+		const modelReady = (json.models ?? []).some((m) => {
+			const base = m.name.split(":")[0];
+			return m.name === model || base === modelBase;
+		});
+		return { ok: true, model, modelReady, via };
+	} catch (err) {
+		const error = err instanceof Error ? err.message : String(err);
+		return { ok: false, error, via };
+	}
+}
+
 export type OllamaExtraction = {
 	merchant: string;
 	date: string;
