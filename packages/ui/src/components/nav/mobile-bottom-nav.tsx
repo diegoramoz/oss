@@ -1,11 +1,18 @@
 "use client";
 
+import type { UserMenuProps } from "@oss/ui/components/nav/user-menu";
 import { UserMenu } from "@oss/ui/components/nav/user-menu";
 import { type NavRoutes, useNavRoutes } from "@oss/ui/hooks/use-nav-routes";
 import { cn } from "@oss/ui/lib/utils";
 import Link from "next/link";
 
-export function MobileBottomNav({ routes }: { routes: NavRoutes }) {
+export function MobileBottomNav({
+	routes,
+	userMenuProps,
+}: {
+	routes: NavRoutes;
+	userMenuProps?: UserMenuProps;
+}) {
 	const activeRoutes = useNavRoutes(routes);
 
 	return (
@@ -43,7 +50,7 @@ export function MobileBottomNav({ routes }: { routes: NavRoutes }) {
 			))}
 
 			<div className="flex flex-1 flex-col items-center justify-center py-2">
-				<UserMenu />
+				<UserMenu {...userMenuProps} />
 			</div>
 		</nav>
 	);

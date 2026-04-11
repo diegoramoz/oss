@@ -12,14 +12,20 @@ import {
 } from "@oss/ui/components/dropdown-menu";
 import { LogOut, Settings } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-export function UserMenu() {
-	const router = useRouter();
+export type UserMenuProps = {
+	onSignOut?: () => void;
+	user?: {
+		email?: string | null;
+		image?: string | null;
+		name?: string | null;
+	} | null;
+};
 
-	const userName = "John Doe";
-	const userEmail = "john.doe@example.com";
-	const userImage = "https://avatars.githubusercontent.com/u/218819614";
+export function UserMenu({ user, onSignOut }: UserMenuProps = {}) {
+	const userName = user?.name ?? "User";
+	const userEmail = user?.email ?? "";
+	const userImage = user?.image ?? undefined;
 	const userInitials = userName
 		.split(" ")
 		.map((name) => name[0])
@@ -27,8 +33,7 @@ export function UserMenu() {
 		.toUpperCase();
 
 	const handleSignOut = () => {
-		router.push("/");
-		router.refresh();
+		onSignOut?.();
 	};
 
 	return (

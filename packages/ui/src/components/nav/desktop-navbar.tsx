@@ -1,12 +1,19 @@
 "use client";
 
 import { NavLogoWithText } from "@oss/ui/components/nav/nav-logo";
+import type { UserMenuProps } from "@oss/ui/components/nav/user-menu";
 import { UserMenu } from "@oss/ui/components/nav/user-menu";
 import { type NavRoutes, useNavRoutes } from "@oss/ui/hooks/use-nav-routes";
 import { cn } from "@oss/ui/lib/utils";
 import Link from "next/link";
 
-export function DesktopNavbar({ routes }: { routes: NavRoutes }) {
+export function DesktopNavbar({
+	routes,
+	userMenuProps,
+}: {
+	routes: NavRoutes;
+	userMenuProps?: UserMenuProps;
+}) {
 	const activeRoutes = useNavRoutes(routes);
 	return (
 		<div
@@ -50,7 +57,7 @@ export function DesktopNavbar({ routes }: { routes: NavRoutes }) {
 					</Link>
 				))}
 				<div className="ml-2">
-					<UserMenu />
+					<UserMenu {...userMenuProps} />
 				</div>
 			</nav>
 		</div>
