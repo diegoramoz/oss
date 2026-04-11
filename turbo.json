@@ -13,7 +13,8 @@
     "RESEND_API_KEY",
     "OLLAMA_URL",
     "CF_ACCESS_CLIENT_ID",
-    "CF_ACCESS_CLIENT_SECRET"
+    "CF_ACCESS_CLIENT_SECRET",
+    "LOCAL_MACHINE_PING_URL"
   ],
   "tasks": {
     "build": {
