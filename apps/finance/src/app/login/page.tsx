@@ -1,20 +1,5 @@
-import { auth } from "@oss/auth";
-
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { Login } from "@/app/login/login";
 
-const HOMEPAGE = "/";
-
-export default async function Page() {
-	const session = await auth.api.getSession({
-		headers: await headers(),
-	});
-
-	// Authenticated users should not access the forgot password page
-	if (session) {
-		redirect(HOMEPAGE);
-	}
-
+export default function Page() {
 	return <Login />;
 }

@@ -50,3 +50,5 @@ coverage
 tmp
 temp
 .vercel
+# next-agents-md
+.next-docs/

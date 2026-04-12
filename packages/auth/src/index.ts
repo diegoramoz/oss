@@ -29,6 +29,12 @@ export function createAuth() {
 				generateId: "serial",
 			},
 		},
+		session: {
+			cookieCache: {
+				enabled: true,
+				maxAge: 5 * 60, // 5 minutes
+			},
+		},
 		trustedOrigins: [
 			env.CORS_ORIGIN,
 			"oss://",

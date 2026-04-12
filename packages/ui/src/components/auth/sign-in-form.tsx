@@ -8,12 +8,11 @@ import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { FingerprintIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import z from "zod/v4";
 
 const HOMEPAGE = "/";
-const USER_HAS_PASSKEY_KEY = "userHasPasskey";
 
 export const { fieldContext, formContext, useFieldContext } =
 	createFormHookContexts();
@@ -39,13 +38,7 @@ const defaultValues: FormSchema = {
 
 export function SignInForm() {
 	const [showPasswordLogin, setShowPasswordLogin] = useState(false);
-	const [hasPasskey, setHasPasskey] = useState<boolean | null>(null);
 	const router = useRouter();
-
-	useEffect(() => {
-		const stored = localStorage.getItem(USER_HAS_PASSKEY_KEY);
-		setHasPasskey(stored ? stored === "true" : false);
-	}, []);
 
 	const form = useAppForm({
 		defaultValues,
@@ -79,11 +72,6 @@ export function SignInForm() {
 		},
 	});
 
-	if (hasPasskey === null) {
-		// Still loading passkey status
-		return null;
-	}
-
 	return (
 		<form
 			onSubmit={(e) => {
@@ -93,46 +81,7 @@ export function SignInForm() {
 			}}
 		>
 			{/* Show passkey login prominently if user has a passkey */}
-			{hasPasskey === true && !showPasswordLogin ? (
-				<>
-					<fieldset className="mb-8">
-						<div className="mb-1 font-bold text-lg">Quick sign in</div>
-						<div className="mb-4 text-muted-foreground italic">
-							Use your passkey for a secure sign in
-						</div>
-					</fieldset>
-
-					<Button
-						className="mb-4 w-full"
-						onClick={async () => await handleLoginWithPasskey({ router })}
-						size="lg"
-						type="button"
-					>
-						<FingerprintIcon className="h-4 w-4" />
-						Sign in
-					</Button>
-					<Button
-						className="mb-6 w-full"
-						onClick={() => setShowPasswordLogin(true)}
-						size="lg"
-						type="button"
-						variant="secondary"
-					>
-						<MailIcon className="h-4 w-4" />
-						Other options
-					</Button>
-
-					<div className="text-center text-muted-foreground text-sm">
-						Don't have an account?{" "}
-						<Link
-							className="text-primary underline-offset-4 hover:underline"
-							href="/signup"
-						>
-							Create an account
-						</Link>
-					</div>
-				</>
-			) : (
+			{showPasswordLogin ? (
 				<>
 					<fieldset className="mb-8">
 						<div className="mb-1 font-bold text-lg">Credentials</div>
@@ -190,6 +139,45 @@ export function SignInForm() {
 					>
 						<FingerprintIcon className="h-4 w-4" />
 						Sign in with passkey
+					</Button>
+
+					<div className="text-center text-muted-foreground text-sm">
+						Don't have an account?{" "}
+						<Link
+							className="text-primary underline-offset-4 hover:underline"
+							href="/signup"
+						>
+							Create an account
+						</Link>
+					</div>
+				</>
+			) : (
+				<>
+					<fieldset className="mb-8">
+						<div className="mb-1 font-bold text-lg">Quick sign in</div>
+						<div className="mb-4 text-muted-foreground italic">
+							Use your passkey for a secure sign in
+						</div>
+					</fieldset>
+
+					<Button
+						className="mb-4 w-full"
+						onClick={async () => await handleLoginWithPasskey({ router })}
+						size="lg"
+						type="button"
+					>
+						<FingerprintIcon className="h-4 w-4" />
+						Sign in
+					</Button>
+					<Button
+						className="mb-6 w-full"
+						onClick={() => setShowPasswordLogin(true)}
+						size="lg"
+						type="button"
+						variant="secondary"
+					>
+						<MailIcon className="h-4 w-4" />
+						Other options
 					</Button>
 
 					<div className="text-center text-muted-foreground text-sm">
