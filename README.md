@@ -36,6 +36,8 @@ Most businesses that deal with high volumes of invoices still rely on people man
 ### `finance` — [finance.zdiego.com](https://finance.zdiego.com)
 A fully functional SaaS demo built around the invoice scanner. Includes authentication (with passkey support), a dashboard showing recorded expenses, an invoice scan flow, and billing via Polar. This is how I'd architect a real SaaS product.
 
+![Finance app demo](apps/finance/public/finance.gif)
+
 ### `web` — [oss.zdiego.com](https://oss.zdiego.com)
 A frontend component showcase. I open-source the components I've built and refined across projects — starting with things like the `Wireframe` layout component. This app is intentionally frontend-only: no backend, just patterns and primitives worth sharing.
 
