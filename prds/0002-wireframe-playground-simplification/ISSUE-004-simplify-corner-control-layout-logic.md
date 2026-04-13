@@ -2,7 +2,7 @@
 id: "004"
 title: Simplify corner-control internal layout logic
 prd: "0002"
-status: open
+status: closed
 type: afk
 blocked_by: ["003"]
 created: 2026-04-13
@@ -29,3 +29,21 @@ In `corner-control.tsx`, replace the four boolean decode variables (`isTopLeft`,
 ## User stories addressed
 
 - User story 4
+
+## Completion
+
+Replaced the four boolean decode variables (`isTopLeft`, `isTopRight`, `isBottomLeft`, `isBottomRight`) with two derived values: `isTop = corner.startsWith("top")` and `isLeft = corner.endsWith("Left")`. All conditions in `renderNavbarDominant` and `renderSidebarDominant` were rewritten using these two variables:
+
+- `(isTopLeft || isTopRight)` → `isTop`
+- `(isBottomLeft || isBottomRight)` → `!isTop`
+- `isTopLeft || isBottomLeft` → `isLeft`
+- `isTopRight || isBottomRight` → `!isLeft`
+- Individual corner checks inside scoped blocks (`isTopLeft` inside an `isTop &&` block) → just `isLeft`
+
+The file went from 108 to 89 lines and reads top-to-bottom without cross-referencing four boolean variables.
+
+## Suggested Commit
+
+DIEGO: 004 PRD-0002 — simplify corner-control layout logic
+
+- packages/ui/src/components/wireframe/corner-control.tsx: replace 4-boolean corner decode with isTop/isLeft derived from string checks
