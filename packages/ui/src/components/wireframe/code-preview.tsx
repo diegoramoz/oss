@@ -1,25 +1,14 @@
-"use client";
-
 import { Button } from "@oss/ui/components/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from "@oss/ui/components/dialog";
 import {
 	defaultCSSVariables,
 	useWireframeConfig,
 } from "@oss/ui/components/wireframe/wireframe-config-provider";
-import { Check, Code2, Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
-export function WireframeCodeModal() {
+export function CodePreview() {
 	const { config } = useWireframeConfig();
 	const [copied, setCopied] = useState(false);
-	const [open, setOpen] = useState(false);
 
 	const buildCornersCode = () => {
 		const corners = [
@@ -54,7 +43,6 @@ export function WireframeCodeModal() {
 	};
 
 	const generateCode = () => {
-		// Filter out CSS variables that match default values
 		const nonDefaultCssVars = Object.entries(config.cssVariables).filter(
 			([key, value]) =>
 				(defaultCSSVariables as Record<string, number | undefined>)[key] !==
@@ -74,7 +62,6 @@ export function WireframeCodeModal() {
 			? `\n  config={{\n${cssVarsCode}${cornersCode}  }}`
 			: "";
 
-		// Nav segment
 		let navSegment: string;
 		if (config.navType === "normal") {
 			const navParts: string[] = [];
@@ -124,42 +111,28 @@ export function WireframeCodeModal() {
 	};
 
 	return (
-		<Dialog onOpenChange={setOpen} open={open}>
-			<DialogTrigger className="inline-flex size-12 items-center justify-center rounded-full bg-blue-600 text-white shadow hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-				<Code2 className="size-5" />
-				<span className="sr-only">View Code</span>
-			</DialogTrigger>
-			<DialogContent className="flex max-h-[90dvh] max-w-3xl flex-col sm:max-h-[85vh]">
-				<DialogHeader className="shrink-0">
-					<DialogTitle>Wireframe Configuration</DialogTitle>
-					<DialogDescription>
-						Copy this code to use your current wireframe configuration
-					</DialogDescription>
-				</DialogHeader>
-				<div className="relative min-h-0 flex-1 overflow-auto">
-					<pre className="rounded-lg bg-muted p-4 font-mono text-sm">
-						<code>{generateCode()}</code>
-					</pre>
-					<Button
-						className="absolute top-2 right-2"
-						onClick={handleCopy}
-						size="sm"
-						variant="secondary"
-					>
-						{copied ? (
-							<>
-								<Check className="mr-2 size-4" />
-								Copied!
-							</>
-						) : (
-							<>
-								<Copy className="mr-2 size-4" />
-								Copy
-							</>
-						)}
-					</Button>
-				</div>
-			</DialogContent>
-		</Dialog>
+		<div className="relative flex flex-1 flex-col">
+			<div className="flex items-center justify-between px-6 py-4">
+				<h2 className="font-semibold text-xl">Wireframe Configuration</h2>
+				<Button onClick={handleCopy} size="sm" variant="secondary">
+					{copied ? (
+						<>
+							<Check className="mr-2 size-4" />
+							Copied!
+						</>
+					) : (
+						<>
+							<Copy className="mr-2 size-4" />
+							Copy
+						</>
+					)}
+				</Button>
+			</div>
+			<div className="flex-1 overflow-auto px-6 pb-6">
+				<pre className="rounded-lg bg-muted p-4 font-mono text-sm">
+					<code>{generateCode()}</code>
+				</pre>
+			</div>
+		</div>
 	);
 }

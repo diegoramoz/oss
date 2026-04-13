@@ -1,10 +1,17 @@
 "use client";
 
 import { SiGithub } from "@icons-pack/react-simple-icons";
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "@oss/ui/components/tabs";
+import { CodePreview } from "@oss/ui/components/wireframe/code-preview";
 import { ConfigurableWireframe } from "@oss/ui/components/wireframe/configurable-wireframe";
 import { LayoutControlsPanel } from "@oss/ui/components/wireframe/layout-controls-panel";
-import { WireframeCodeModal } from "@oss/ui/components/wireframe/wireframe-code-modal";
 import { WireframeConfigProvider } from "@oss/ui/components/wireframe/wireframe-config-provider";
+import { Code2 } from "lucide-react";
 import Link from "next/link";
 
 function PlaygroundContent() {
@@ -21,15 +28,27 @@ function PlaygroundContent() {
 						</p>
 					</div>
 
-					<div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
-						<LayoutControlsPanel />
-					</div>
+					<Tabs defaultValue="config">
+						<TabsList className="mb-4">
+							<TabsTrigger value="config">
+								<Code2 className="mr-2 size-4" />
+								Configuration
+							</TabsTrigger>
+							<TabsTrigger value="code">Code</TabsTrigger>
+						</TabsList>
+						<TabsContent value="config">
+							<div className="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+								<LayoutControlsPanel />
+							</div>
+						</TabsContent>
+						<TabsContent value="code">
+							<CodePreview />
+						</TabsContent>
+					</Tabs>
 				</div>
 			</ConfigurableWireframe>
 
-			{/* Bottom Right Action Buttons */}
-			<div className="fixed right-[calc(1.5rem+env(safe-area-inset-right))] bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-1000 flex gap-3">
-				<WireframeCodeModal />
+			<div className="fixed right-[calc(1.5rem+env(safe-area-inset-right))] bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-1000">
 				<Link
 					aria-label="View on GitHub"
 					className="inline-flex size-12 items-center justify-center rounded-full bg-white text-black shadow hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-600"
