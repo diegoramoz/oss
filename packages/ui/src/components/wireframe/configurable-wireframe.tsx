@@ -20,7 +20,7 @@ function ComponentName({ title, code }: { title: string; code: string }) {
 	return (
 		<Tooltip>
 			<TooltipTrigger>
-				<span className="rounded bg-white px-2 py-0.5 font-semibold">
+				<span className="rounded bg-background px-2 py-0.5 font-semibold">
 					{title}
 				</span>
 			</TooltipTrigger>
@@ -53,7 +53,7 @@ export function ConfigurableWireframe({
 				<>
 					{config.showTopNav && (
 						<WireframeNav position="top">
-							<div className="flex h-full items-center justify-center bg-green-200 px-4">
+							<div className="flex h-full items-center justify-center bg-green-200 px-4 dark:bg-green-900">
 								<ComponentName
 									code={`<WireframeNav position="top"/>`}
 									title="Top Navigation"
@@ -63,7 +63,7 @@ export function ConfigurableWireframe({
 					)}
 					{config.showBottomNav && (
 						<WireframeNav position="bottom">
-							<div className="flex h-full items-center justify-center bg-purple-200 px-4">
+							<div className="flex h-full items-center justify-center bg-purple-200 px-4 dark:bg-purple-900">
 								<ComponentName
 									code={`<WireframeNav position="bottom"/>`}
 									title="Bottom Navigation"
@@ -76,7 +76,7 @@ export function ConfigurableWireframe({
 
 			{config.navType === "sticky" && (
 				<WireframeStickyNav>
-					<div className="flex h-full items-center justify-center bg-rose-200 px-4">
+					<div className="flex h-full items-center justify-center bg-rose-200 px-4 dark:bg-rose-900">
 						<ComponentName code={"<StickyNav />"} title="Sticky Navigation" />
 					</div>
 				</WireframeStickyNav>
@@ -84,7 +84,7 @@ export function ConfigurableWireframe({
 
 			{config.navType === "responsive" && (
 				<WireframeNav position="responsive">
-					<div className="flex h-full items-center justify-center bg-yellow-200 px-4">
+					<div className="flex h-full items-center justify-center bg-yellow-200 px-4 dark:bg-yellow-900">
 						<ComponentName
 							code={'<WireframeNav position="responsive" />'}
 							title="Responsive Navigation"
@@ -95,7 +95,7 @@ export function ConfigurableWireframe({
 			{/* Render left sidebar if enabled */}
 			{config.showLeftSidebar && (
 				<WireframeSidebar collapsed={leftSidebarCollapsed} position="left">
-					<div className="min-h-full bg-blue-200 p-4">
+					<div className="min-h-full bg-blue-200 p-4 dark:bg-blue-900">
 						<div
 							className={cn(
 								"mb-4 flex items-center justify-between",
@@ -118,7 +118,7 @@ export function ConfigurableWireframe({
 							</button>
 						</div>
 						{leftSidebarCollapsed === false && (
-							<div className="h-[1000px] border border-black" />
+							<div className="h-[1000px] border border-border" />
 						)}
 					</div>
 				</WireframeSidebar>
@@ -127,7 +127,7 @@ export function ConfigurableWireframe({
 			{/* Render right sidebar if enabled */}
 			{config.showRightSidebar && (
 				<WireframeSidebar collapsed={rightSidebarCollapsed} position="right">
-					<div className="min-h-full bg-blue-200 p-4">
+					<div className="min-h-full bg-blue-200 p-4 dark:bg-blue-900">
 						<div
 							className={cn(
 								"mb-4 flex flex-row-reverse items-center justify-between",
@@ -150,7 +150,7 @@ export function ConfigurableWireframe({
 							</button>
 						</div>
 						{rightSidebarCollapsed === false && (
-							<div className="h-[1000px] border border-black" />
+							<div className="h-[1000px] border border-border" />
 						)}
 					</div>
 				</WireframeSidebar>

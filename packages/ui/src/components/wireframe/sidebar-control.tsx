@@ -16,7 +16,7 @@ export function SidebarControl({
 	return (
 		<button
 			className={cn(
-				"relative size-16 overflow-hidden rounded-md border-2 bg-white transition-all hover:scale-105",
+				"relative size-16 overflow-hidden rounded-md border-2 bg-background transition-all hover:scale-105",
 				enabled
 					? "border-primary ring-2 ring-primary ring-offset-2"
 					: "border-border hover:border-primary/50"

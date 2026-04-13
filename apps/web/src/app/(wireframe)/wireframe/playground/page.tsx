@@ -38,7 +38,7 @@ function PlaygroundContent() {
 						"size-12 rounded-full",
 						buttonVariants({ size: "icon", variant: "default" })
 					)}
-					href="https://github.com/zdiegoramos/wireframe"
+					href="https://github.com/zdiegoramos/oss"
 					rel="noopener noreferrer"
 					target="_blank"
 				>
