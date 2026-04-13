@@ -64,7 +64,7 @@ function DemoSidebar({
 						{toggleArrow}
 					</button>
 				</div>
-				{!collapsed && <div className="h-[1000px] border border-border" />}
+				{!collapsed && <div className="h-250 border border-border" />}
 			</div>
 		</WireframeSidebar>
 	);

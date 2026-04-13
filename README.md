@@ -43,6 +43,8 @@ This setup achieves private inference because the LLM runs on a local machine, w
 ### `web` — [oss.zdiego.com](https://oss.zdiego.com)
 A frontend component showcase. I open-source the components I've built and refined across projects — starting with things like the `Wireframe` layout component. This app is intentionally frontend-only: no backend, just patterns and primitives worth sharing.
 
+![Web app demo](apps/web/public/wireframe.gif)
+
 ---
 
 ## Stack
