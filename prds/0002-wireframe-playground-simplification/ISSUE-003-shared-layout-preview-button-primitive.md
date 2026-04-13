@@ -2,7 +2,7 @@
 id: "003"
 title: Shared LayoutPreviewButton primitive
 prd: "0002"
-status: open
+status: closed
 type: afk
 blocked_by: []
 created: 2026-04-13
@@ -33,3 +33,15 @@ None — can start immediately.
 
 - User story 4
 - User story 5
+
+## Completion
+
+Created `layout-preview-button.tsx` with a `LayoutPreviewButton` component wrapping a `<button>` with the shared selection ring styling. It accepts `selected`, `onClick`, and `children`. Updated both `corner-control.tsx` and `responsive-corner-control.tsx` to import and use `LayoutPreviewButton` for their two option buttons — the duplicated `border-primary ring-2 ring-primary ring-offset-2` / `border-border hover:border-primary/50` class strings are gone from both files. Removed the unused `cn` import from both updated files. Biome attribute sort order (`onClick` before `selected`) applied throughout.
+
+## Suggested Commit
+
+DIEGO: 003 PRD-0002 — shared LayoutPreviewButton primitive
+
+- packages/ui/src/components/wireframe/layout-preview-button.tsx: new file with LayoutPreviewButton component
+- packages/ui/src/components/wireframe/corner-control.tsx: use LayoutPreviewButton, remove duplicated button classes
+- packages/ui/src/components/wireframe/responsive-corner-control.tsx: use LayoutPreviewButton, remove duplicated button classes

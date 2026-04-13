@@ -1,4 +1,4 @@
-import { cn } from "@oss/ui/lib/utils";
+import { LayoutPreviewButton } from "./layout-preview-button";
 
 type CornerControlProps = {
 	corner: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
@@ -90,31 +90,19 @@ export function CornerControl({
 
 	return (
 		<div className="flex gap-2">
-			<button
-				className={cn(
-					"relative size-16 overflow-hidden rounded-md border-2 transition-all hover:scale-105",
-					selected === "navbar"
-						? "border-primary ring-2 ring-primary ring-offset-2"
-						: "border-border hover:border-primary/50"
-				)}
+			<LayoutPreviewButton
 				onClick={() => onSelect("navbar")}
-				type="button"
+				selected={selected === "navbar"}
 			>
 				{renderNavbarDominant()}
-			</button>
+			</LayoutPreviewButton>
 
-			<button
-				className={cn(
-					"relative size-16 overflow-hidden rounded-md border-2 transition-all hover:scale-105",
-					selected === "sidebar"
-						? "border-primary ring-2 ring-primary ring-offset-2"
-						: "border-border hover:border-primary/50"
-				)}
+			<LayoutPreviewButton
 				onClick={() => onSelect("sidebar")}
-				type="button"
+				selected={selected === "sidebar"}
 			>
 				{renderSidebarDominant()}
-			</button>
+			</LayoutPreviewButton>
 		</div>
 	);
 }
