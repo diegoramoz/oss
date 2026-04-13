@@ -47,7 +47,9 @@ const WireframeConfigContext = createContext<
 	WireframeConfigContextType | undefined
 >(undefined);
 
-const defaultCSSVariables: Partial<Record<WireframeCSSVariables, number>> = {
+export const defaultCSSVariables: Partial<
+	Record<WireframeCSSVariables, number>
+> = {
 	// STICKY NAV
 	"--sticky-nav-height": 12,
 	"--sticky-nav-top-offset": 0,

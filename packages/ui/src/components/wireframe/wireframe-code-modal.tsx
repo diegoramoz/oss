@@ -9,7 +9,10 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@oss/ui/components/dialog";
-import { useWireframeConfig } from "@oss/ui/components/wireframe/wireframe-config-provider";
+import {
+	defaultCSSVariables,
+	useWireframeConfig,
+} from "@oss/ui/components/wireframe/wireframe-config-provider";
 import { Check, Code2, Copy } from "lucide-react";
 import { useState } from "react";
 
@@ -17,38 +20,6 @@ export function WireframeCodeModal() {
 	const { config } = useWireframeConfig();
 	const [copied, setCopied] = useState(false);
 	const [open, setOpen] = useState(false);
-
-	const defaultCSSVariables: Record<string, number> = {
-		// STICKY NAV
-		"--sticky-nav-height": 12,
-		"--sticky-nav-top-offset": 0,
-		// TOP NAV
-		"--top-nav-height": 16,
-		"--top-nav-left-offset": 0,
-		"--top-nav-right-offset": 0,
-		"--top-nav-top-offset": 0,
-		"--top-nav-bottom-offset": 0,
-		// BOTTOM NAV
-		"--bottom-nav-height": 8,
-		"--bottom-nav-left-offset": 0,
-		"--bottom-nav-right-offset": 0,
-		"--bottom-nav-top-offset": 0,
-		"--bottom-nav-bottom-offset": 0,
-		// LEFT SIDEBAR
-		"--left-sidebar-width-collapsed": 16,
-		"--left-sidebar-width-expanded": 52,
-		"--left-sidebar-left-offset": 0,
-		"--left-sidebar-right-offset": 0,
-		"--left-sidebar-top-offset": 0,
-		"--left-sidebar-bottom-offset": 0,
-		// RIGHT SIDEBAR
-		"--right-sidebar-width-expanded": 52,
-		"--right-sidebar-width-collapsed": 16,
-		"--right-sidebar-left-offset": 0,
-		"--right-sidebar-right-offset": 0,
-		"--right-sidebar-top-offset": 0,
-		"--right-sidebar-bottom-offset": 0,
-	};
 
 	const buildCornersCode = () => {
 		const corners = [
@@ -93,7 +64,9 @@ export function WireframeCodeModal() {
 
 		// Filter out CSS variables that match default values
 		const nonDefaultCssVars = Object.entries(config.cssVariables).filter(
-			([key, value]) => defaultCSSVariables[key] !== value
+			([key, value]) =>
+				(defaultCSSVariables as Record<string, number | undefined>)[key] !==
+				value
 		);
 
 		const cssVarsCode =
