@@ -28,7 +28,7 @@ export default async function BlogPostPage({ params }: Props) {
 	}
 
 	return (
-		<article className="font-serif text-2xl leading-relaxed">
+		<article className="leading-relaxed">
 			<h1 className="mb-3 font-bold text-4xl leading-tight">
 				{post.metadata.title}
 			</h1>
