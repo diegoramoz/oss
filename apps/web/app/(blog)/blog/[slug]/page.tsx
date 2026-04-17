@@ -1,0 +1,30 @@
+import { notFound } from "next/navigation";
+import { getBlogSlugs } from "@/lib/blog";
+
+type Props = {
+	params: Promise<{ slug: string }>;
+};
+
+export function generateStaticParams() {
+	return getBlogSlugs().map((slug) => ({ slug }));
+}
+
+export const dynamicParams = false;
+
+export default async function BlogPostPage({ params }: Props) {
+	const { slug } = await params;
+
+	let Post: React.ComponentType;
+	try {
+		const mod = await import(`@/content/blog/${slug}.mdx`);
+		Post = mod.default;
+	} catch {
+		notFound();
+	}
+
+	return (
+		<article className="prose prose-neutral dark:prose-invert">
+			<Post />
+		</article>
+	);
+}
