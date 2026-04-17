@@ -5,6 +5,14 @@ import type { NextConfig } from "next";
 const withMDX = createMDX({
 	options: {
 		remarkPlugins: ["remark-frontmatter"],
+		rehypePlugins: [
+			[
+				"@shikijs/rehype",
+				{
+					theme: "vesper",
+				},
+			],
+		],
 	},
 });
 
