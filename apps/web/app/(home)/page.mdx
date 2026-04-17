@@ -1,0 +1,88 @@
+import ResumeHeader from "@/components/resume-header";
+
+<ResumeHeader />
+
+<article className="prose prose-neutral dark:prose-invert">
+
+## PROJECTS
+
+### [AI Invoice Scanner](https://github.com/diegoramoz/oss) - April 2026
+
+A fully functional demo of an AI invoice scanner. Users submit their invoices on [finance.ramoz.dev](https://finance.ramoz.dev) and an [ollama](https://ollama.com) vision LLM extracts structured data from it. Turning pdfs/images into a queryable database.
+
+This setup achieves private inference because the LLM runs on a local machine, which is exposed to the internet using a [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/) + Zero Trust Access.
+
+<a href="/finance.gif" rel="noopener" target="_blank">
+  <Image alt="AI Invoice Scanner demo" className="rounded-md" height={450} loading="eager" src="/finance.gif" unoptimized width={800} />
+</a>
+
+### [Interactive 3D Flower Visualizer](https://github.com/diegoramoz/oss) - Dec 2025
+
+Built a parametric 3D flower renderer in Next.js using p5.js and TypeScript. Features customizable flower geometry, adaptive mesh resolution during interaction for smooth performance, URL-encoded shareable presets via compact query strings.
+
+<a href="/flower.gif" rel="noopener" target="_blank">
+  <Image alt="Interactive 3D Flower Visualizer demo" className="rounded-md" height={450} src="/flower.gif" unoptimized width={800} />
+</a>
+
+### [Wireframe](https://github.com/diegoramoz/wireframe) - Dec 2025
+
+A React component system for building fixed/sticky navigation layouts with automatic content spacing. Define your navbar and sidebar dimensions once, and the content area adjusts automatically.
+
+<a href="/wireframe/playground" rel="noopener" target="_blank">
+  <Image alt="Wireframe demo" className="rounded-md" height={450} src="/wireframe.gif" unoptimized width={800} />
+</a>
+
+## EXPERIENCE
+
+### [Hazlo Ya](https://hazloya.app) - Senior Full-Stack Engineer, Oct 2025 - Present
+
+A B2B marketplace where businesses post jobs and pre-verified suppliers bid to deliver them. Clients compare quotes, check ratings, and award work in-app, while the platform's unified e-invoicing engine sets the national billing standard.
+
+Built with TypeScript, Next.js (with PWA support), Planetscale (MySQL), and deployed on Vercel.
+
+### Gaias Labs - Senior Full-Stack Engineer, Mar 2024 - Oct 2025
+
+RACE is a game available on Base chain. Users play by depositing ETH for one of four hamsters before they race. The hamsters are AI agents that get better over time as they race. The races are the result of the execution of a smart contract function.
+
+**Frontend contributions**
+
+- Made RACE installable as a PWA and compatible with Farcaster, Base, and Telegram Mini Apps.
+- Detected a critical security vulnerability with Privy authentication in our frontend and patched it.
+- Created a referral system with which tens of thousands of users were referred.
+
+**Management contributions**
+
+- Conducted interviews to hire a frontend engineer and tutored two frontend engineers (Next.js, Typescript).
+- Provided design and engineering patterns, including the use of TailwindCSS and shadcn-ui to ensure a smooth development between all team members.
+
+**Backend contributions**
+
+- Created a MySQL database with 57 tables using Drizzle ORM and deployed it to Planetscale.
+- Created 88 endpoints to handle transactions on Base, serve user data, authenticate, perform user and admin actions, handle webhooks from third party services, and handle cron jobs.
+- Deployed a Linux server (Ubuntu) on DigitalOcean to manage Node.js workers and cron jobs.
+- Implemented parallel UserOps to execute multiple transactions at a time.
+- Created a job queue with BullMQ to update the players' data in real time based on blockchain activity.
+- Created strongly typed tRPC endpoints that significantly reduced development time by providing thorough errors and automatically documenting all endpoints through type inference.
+- Created a point based, reward mechanism. Once a week the points could be redeemed as ERC-20 tokens.
+- Created in-app ERC-20-ETH swap using the 0x API. The transaction was bundled such that the approval and swap transactions for an ERC-20 happened with a single button press.
+
+### Momentum Labs - Full-Stack Engineer, Mar 2023 - Oct 2023
+
+- Created editable UI design systems with TailwindCSS and TypeScript which serve as a starting point or as plug-n-play components for any React application.
+
+### Uneven Labs, Cocoa, FL - Frontend Engineer, Oct 2021 - Oct 2022
+
+- Created the Reservoir Market, an open source NFT marketplace built on the Reservoir Protocol.
+- Contributed to ReservoirKit, a React package that makes it easy to add buying NFTs into a dApp.
+- Created the Reservoir Client SDK package. It contains functions to interact with the Reservoir Router API.
+- Provided technical support to developers who use the Reservoir Market.
+- Served as an assistant to a Solidity engineer.
+
+## EDUCATION
+
+### NJIT, Newark, NJ - Bachelor's Degree in Electrical Engineering (Computer Systems), 2019
+
+- Created finite state machines and implemented the MIPS RISC architecture in FPGAs using VHDL.
+- Programmed microprocessors using C and Assembly language.
+
+</article>
