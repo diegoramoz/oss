@@ -8,7 +8,7 @@ export function AppTopNav() {
 			hide="mobile"
 			position="top"
 		>
-			<div className="flex items-center gap-3">
+			<div className="flex items-center">
 				<LogoSphere />
 				<div>
 					<div className="font-bold text-sm">Diego Ramos</div>
